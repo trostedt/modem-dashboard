@@ -42,7 +42,7 @@ if uploaded_file:
                     y=df[f"{selected_modem} - Disconnect %"],
                     name="Disconnect %",
                     line=dict(color="green"),
-                    hovertemplate="Disconnect %%: %{y}<br>Time: %{x} min"
+                    hovertemplate="Disconnect %: %{y}<br>Time: %{x} min"
                 ),
                 secondary_y=False
             )
@@ -55,7 +55,7 @@ if uploaded_file:
                     y=df[f"{selected_modem} - Latency"],
                     name="Latency (ms)",
                     line=dict(color="blue", dash="dash"),
-                    hovertemplate="Latency (ms): %{y:.1f}<br>Time: %{x} min"
+                    hovertemplate="Latency: %{y:.1f} ms<br>Time: %{x} min"
                 ),
                 secondary_y=True
             )
@@ -68,7 +68,7 @@ if uploaded_file:
                     y=df[f"{selected_modem} - RSSI"],
                     name="RSSI (dBm)",
                     line=dict(color="red", dash="dot"),
-                    hovertemplate="RSSI (dBm): %{y:.1f}<br>Time: %{x} min"
+                    hovertemplate="RSSI: %{y:.1f} dBm<br>Time: %{x} min"
                 ),
                 secondary_y=True
             )
@@ -106,7 +106,7 @@ if uploaded_file:
                     x=df[time_col],
                     y=df[f"{modem} - {selected_metric}"],
                     name=modem,
-                    hovertemplate="%{fullData.name}<br>Value: %{y}<br>Time: %{x} min"
+                    hovertemplate="Modem: %{name}<br>Value: %{y}<br>Time: %{x} min"
                 ))
 
             fig.update_layout(
