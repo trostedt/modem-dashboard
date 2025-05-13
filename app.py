@@ -102,7 +102,7 @@ if uploaded_file:
                     x=df[time_col],
                     y=df[f"{modem} - {selected_metric}"],
                     name=modem,
-                    hovertemplate=f"<b>{modem}</b><br>Value: %{{y}}"
+                    hovertemplate=f"<b>{modem}</b><br>Value: %{{y}}<br>Time: %{{x}} min"
                 ))
             fig.update_layout(
                 title=f"{selected_metric} Over Time",
