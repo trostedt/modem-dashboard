@@ -32,67 +32,76 @@ if uploaded_file:
             default=metric_options
         )
 
-        if selected_metrics:
-            fig = go.Figure()
+        # Create multi-axis figure
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+        show_plot = False
 
-            if "Disconnect %" in selected_metrics:
-                fig.add_trace(go.Scatter(
+        if "Disconnect %" in selected_metrics:
+            fig.add_trace(
+                go.Scatter(
                     x=df[time_col],
                     y=df[f"{selected_modem} - Disconnect %"],
                     name="Disconnect %",
-                    yaxis="y1",
                     line=dict(color="green")
-                ))
+                ),
+                secondary_y=False
+            )
+            show_plot = True
 
-            if "Latency" in selected_metrics:
-                fig.add_trace(go.Scatter(
+        if "Latency" in selected_metrics:
+            fig.add_trace(
+                go.Scatter(
                     x=df[time_col],
                     y=df[f"{selected_modem} - Latency"],
                     name="Latency (ms)",
-                    yaxis="y2",
                     line=dict(color="blue")
-                ))
+                ),
+                secondary_y=True
+            )
+            show_plot = True
 
-            if "RSSI" in selected_metrics:
-                fig.add_trace(go.Scatter(
+        if "RSSI" in selected_metrics:
+            fig.add_trace(
+                go.Scatter(
                     x=df[time_col],
                     y=df[f"{selected_modem} - RSSI"],
                     name="RSSI (dBm)",
-                    yaxis="y3",
-                    line=dict(color="red")
-                ))
+                    line=dict(color="red"),
+                    yaxis="y3"
+                )
+            )
+            fig.update_layout(
+                yaxis3=dict(
+                    title="RSSI (dBm)",
+                    overlaying="y",
+                    side="right",
+                    position=1.0,
+                    range=[-120, 0],
+                    titlefont=dict(color="red"),
+                    tickfont=dict(color="red")
+                )
+            )
+            show_plot = True
 
-            # Set up multi-y-axis layout
+        if show_plot:
             fig.update_layout(
                 title=f"{selected_modem} - Selected Metrics Over Time",
                 xaxis=dict(title="Time (minutes)"),
                 yaxis=dict(
                     title="Disconnect %",
+                    range=[0, 100],
                     titlefont=dict(color="green"),
-                    tickfont=dict(color="green"),
-                    range=[0, 100]
+                    tickfont=dict(color="green")
                 ),
                 yaxis2=dict(
                     title="Latency (ms)",
                     titlefont=dict(color="blue"),
-                    tickfont=dict(color="blue"),
-                    overlaying="y",
-                    side="right"
-                ),
-                yaxis3=dict(
-                    title="RSSI (dBm)",
-                    titlefont=dict(color="red"),
-                    tickfont=dict(color="red"),
-                    overlaying="y",
-                    side="right",
-                    position=0.95,
-                    range=[-120, 0]
+                    tickfont=dict(color="blue")
                 ),
                 legend=dict(x=0.01, y=0.99),
                 margin=dict(l=40, r=80, t=40, b=40),
                 height=500
             )
-
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.warning("Please select at least one metric.")
@@ -108,8 +117,20 @@ if uploaded_file:
             df_plot = df[[time_col] + value_cols]
             df_melted = df_plot.melt(id_vars=time_col, var_name="Modem", value_name="Value")
 
-            fig = px.line(df_melted, x=time_col, y="Value", color="Modem",
-                          title=f"{selected_metric} Over Time")
+            fig = go.Figure()
+            for modem in selected_modems:
+                fig.add_trace(go.Scatter(
+                    x=df[time_col],
+                    y=df[f"{modem} - {selected_metric}"],
+                    name=modem
+                ))
+
+            fig.update_layout(
+                title=f"{selected_metric} Over Time",
+                xaxis_title="Time (minutes)",
+                yaxis_title=selected_metric,
+                height=500
+            )
             st.plotly_chart(fig, use_container_width=True)
 
             if selected_metric == "Disconnect %" and st.checkbox("Show Heatmap"):
