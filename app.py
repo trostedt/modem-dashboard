@@ -16,7 +16,7 @@ uploaded_file = st.file_uploader("Upload CSV", type="csv")
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
     time_col = df.columns[0]
-    modem_cols = df.columns[1:]
+    modem_cols = df.columns[1:9]  # First 8 columns are modems
 
     # Simulated extra metrics (add latency and RSSI if not present)
     if "LatencyMs" not in df.columns:
@@ -30,8 +30,13 @@ if uploaded_file:
         st.header("Single Modem View")
 
         selected_modem = st.selectbox("Select a modem", modem_cols)
+
+        # Ensure Disconnect % is available as a column with a known name
+        df["Selected_Disconnect"] = df[selected_modem]
+
+        # Map user-friendly names to columns
         available_metrics = {
-            "Disconnect %": selected_modem,
+            "Disconnect %": "Selected_Disconnect",
             "Latency (ms)": "LatencyMs",
             "RSSI (dBm)": "RSSIdBm"
         }
@@ -77,6 +82,7 @@ if uploaded_file:
                     st.subheader("Disconnect % Heatmap")
                     heatmap_data = df[selected_modems].T
                     fig2, ax = plt.subplots(figsize=(12, 5))
+                    import seaborn as sns
                     sns.heatmap(heatmap_data, cmap="YlGnBu", vmin=0, vmax=100,
                                 xticklabels=10, yticklabels=selected_modems, cbar_kws={'label': 'Disconnect %'})
                     st.pyplot(fig2)
