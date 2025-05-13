@@ -53,7 +53,7 @@ if uploaded_file:
                 go.Scatter(
                     x=df[time_col],
                     y=df[f"{selected_modem} - Latency"],
-                    name="Latency (ms)",
+                    name="Latency",
                     line=dict(color="blue", dash="dash"),
                     hovertemplate="Latency: %{y:.1f} ms<br>Time: %{x} min"
                 ),
@@ -66,7 +66,7 @@ if uploaded_file:
                 go.Scatter(
                     x=df[time_col],
                     y=df[f"{selected_modem} - RSSI"],
-                    name="RSSI (dBm)",
+                    name="RSSI",
                     line=dict(color="red", dash="dot"),
                     hovertemplate="RSSI: %{y:.1f} dBm<br>Time: %{x} min"
                 ),
@@ -84,7 +84,7 @@ if uploaded_file:
                 hovermode="x unified"
             )
             fig.update_yaxes(title_text="Disconnect %", secondary_y=False)
-            fig.update_yaxes(title_text="Latency (ms) / RSSI (dBm)", secondary_y=True)
+            fig.update_yaxes(title_text="Latency / RSSI", secondary_y=True)
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.warning("Please select at least one metric.")
@@ -96,26 +96,27 @@ if uploaded_file:
         selected_modems = st.multiselect("Select modems to compare", modem_ids, default=modem_ids)
 
         if selected_modems:
-            value_cols = [f"{modem} - {selected_metric}" for modem in selected_modems]
-            df_plot = df[[time_col] + value_cols]
-            df_melted = df_plot.melt(id_vars=time_col, var_name="Modem", value_name="Value")
-
             fig = go.Figure()
             for modem in selected_modems:
+                modem_label = modem
                 fig.add_trace(go.Scatter(
                     x=df[time_col],
                     y=df[f"{modem} - {selected_metric}"],
-                    name=modem,
-                    hovertemplate=f"<b>{modem}</b><br>Value: %{{y}}<br>Time: %{{x}} min"
+                    name=modem_label,
+                    hovertemplate=f"<b>{modem_label}</b><br>Value: %{{y}}<br>Time: %{{x}} min"
                 ))
             fig.update_layout(
-
+                title=f"{selected_metric} Over Time",
+                xaxis_title="Time (minutes)",
+                yaxis_title=selected_metric,
+                height=500,
                 hovermode="x unified"
             )
             st.plotly_chart(fig, use_container_width=True)
 
             if selected_metric == "Disconnect %" and st.checkbox("Show Heatmap"):
                 st.subheader("Disconnect % Heatmap")
+                value_cols = [f"{modem} - {selected_metric}" for modem in selected_modems]
                 heatmap_data = df[value_cols].T
                 fig2, ax = plt.subplots(figsize=(12, 5))
                 sns.heatmap(heatmap_data, cmap="YlGnBu", vmin=0, vmax=100,
