@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
-import plotly.express as px
+import plotly.graph_objects as go
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -32,14 +32,70 @@ if uploaded_file:
             default=metric_options
         )
 
-        columns_to_plot = [f"{selected_modem} - {metric}" for metric in selected_metrics]
+        if selected_metrics:
+            fig = go.Figure()
 
-        df_plot = df[[time_col] + columns_to_plot]
-        df_melted = df_plot.melt(id_vars=time_col, var_name="Metric", value_name="Value")
+            if "Disconnect %" in selected_metrics:
+                fig.add_trace(go.Scatter(
+                    x=df[time_col],
+                    y=df[f"{selected_modem} - Disconnect %"],
+                    name="Disconnect %",
+                    yaxis="y1",
+                    line=dict(color="green")
+                ))
 
-        fig = px.line(df_melted, x=time_col, y="Value", color="Metric",
-                      title=f"{selected_modem} - Selected Metrics Over Time")
-        st.plotly_chart(fig, use_container_width=True)
+            if "Latency" in selected_metrics:
+                fig.add_trace(go.Scatter(
+                    x=df[time_col],
+                    y=df[f"{selected_modem} - Latency"],
+                    name="Latency (ms)",
+                    yaxis="y2",
+                    line=dict(color="blue")
+                ))
+
+            if "RSSI" in selected_metrics:
+                fig.add_trace(go.Scatter(
+                    x=df[time_col],
+                    y=df[f"{selected_modem} - RSSI"],
+                    name="RSSI (dBm)",
+                    yaxis="y3",
+                    line=dict(color="red")
+                ))
+
+            # Set up multi-y-axis layout
+            fig.update_layout(
+                title=f"{selected_modem} - Selected Metrics Over Time",
+                xaxis=dict(title="Time (minutes)"),
+                yaxis=dict(
+                    title="Disconnect %",
+                    titlefont=dict(color="green"),
+                    tickfont=dict(color="green"),
+                    range=[0, 100]
+                ),
+                yaxis2=dict(
+                    title="Latency (ms)",
+                    titlefont=dict(color="blue"),
+                    tickfont=dict(color="blue"),
+                    overlaying="y",
+                    side="right"
+                ),
+                yaxis3=dict(
+                    title="RSSI (dBm)",
+                    titlefont=dict(color="red"),
+                    tickfont=dict(color="red"),
+                    overlaying="y",
+                    side="right",
+                    position=0.95,
+                    range=[-120, 0]
+                ),
+                legend=dict(x=0.01, y=0.99),
+                margin=dict(l=40, r=80, t=40, b=40),
+                height=500
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.warning("Please select at least one metric.")
 
     with tab2:
         st.header("Multi-Modem Comparison")
