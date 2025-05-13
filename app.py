@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import seaborn as sns
 import matplotlib.pyplot as plt
+from plotly.subplots import make_subplots
 
 st.set_page_config(page_title="Modem Connectivity Dashboard", layout="wide")
 st.title("📡 Modem Connectivity Dashboard")
@@ -33,10 +33,10 @@ if uploaded_file:
             default=metric_options
         )
 
-        # Create multi-axis figure
         fig = make_subplots(specs=[[{"secondary_y": True}]])
         show_plot = False
 
+        # Left Y-axis
         if "Disconnect %" in selected_metrics:
             fig.add_trace(
                 go.Scatter(
@@ -49,13 +49,14 @@ if uploaded_file:
             )
             show_plot = True
 
+        # Right Y-axis
         if "Latency" in selected_metrics:
             fig.add_trace(
                 go.Scatter(
                     x=df[time_col],
                     y=df[f"{selected_modem} - Latency"],
                     name="Latency (ms)",
-                    line=dict(color="blue")
+                    line=dict(color="blue", dash="dash")
                 ),
                 secondary_y=True
             )
@@ -67,20 +68,9 @@ if uploaded_file:
                     x=df[time_col],
                     y=df[f"{selected_modem} - RSSI"],
                     name="RSSI (dBm)",
-                    line=dict(color="red"),
-                    yaxis="y3"
-                )
-            )
-            fig.update_layout(
-                yaxis3=dict(
-                    title="RSSI (dBm)",
-                    overlaying="y",
-                    side="right",
-                    position=1.0,
-                    range=[-120, 0],
-                    titlefont=dict(color="red"),
-                    tickfont=dict(color="red")
-                )
+                    line=dict(color="red", dash="dot")
+                ),
+                secondary_y=True
             )
             show_plot = True
 
@@ -95,7 +85,7 @@ if uploaded_file:
                     tickfont=dict(color="green")
                 ),
                 yaxis2=dict(
-                    title="Latency (ms)",
+                    title="Latency (ms) / RSSI (dBm)",
                     titlefont=dict(color="blue"),
                     tickfont=dict(color="blue")
                 ),
