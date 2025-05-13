@@ -98,12 +98,11 @@ if uploaded_file:
         if selected_modems:
             fig = go.Figure()
             for modem in selected_modems:
-                modem_label = modem
                 fig.add_trace(go.Scatter(
                     x=df[time_col],
                     y=df[f"{modem} - {selected_metric}"],
-                    name=modem_label,
-                    hovertemplate=f"<b>{modem_label}</b><br>Value: %{{y}}<br>Time: %{{x}} min"
+                    name=modem,
+                    hovertemplate=f"<b>{modem}</b><br>Value: %{{y}}<br>Time: %{{x}} min"
                 ))
             fig.update_layout(
                 title=f"{selected_metric} Over Time",
