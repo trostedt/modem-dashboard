@@ -105,8 +105,9 @@ if uploaded_file:
                 fig.add_trace(go.Scatter(
                     x=df[time_col],
                     y=df[f"{modem} - {selected_metric}"],
-                    name=modem,
-                    hovertemplate="Modem: %{name}<br>Value: %{y}<br>Time: %{x} min"
+                    name=f"{modem}",
+                    hovertemplate=f"%{{y}}<br>Time: %{{x}} min",
+                    hovertemplate="%{name}<br>Value: %{y}<br>Time: %{x} min"
                 ))
 
             fig.update_layout(
