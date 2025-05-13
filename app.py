@@ -42,7 +42,7 @@ if uploaded_file:
                     y=df[f"{selected_modem} - Disconnect %"],
                     name="Disconnect %",
                     line=dict(color="green"),
-                    hovertemplate="Disconnect %: %{y}<br>Time: %{x} min"
+                    hovertemplate="Time: %{x}<br>Disconnect %: %{y}"
                 ),
                 secondary_y=False
             )
@@ -55,7 +55,7 @@ if uploaded_file:
                     y=df[f"{selected_modem} - Latency"],
                     name="Latency",
                     line=dict(color="blue", dash="dash"),
-                    hovertemplate="Latency: %{y:.1f} ms<br>Time: %{x} min"
+                    hovertemplate="Latency: %{y:.1f} ms"
                 ),
                 secondary_y=True
             )
@@ -68,7 +68,7 @@ if uploaded_file:
                     y=df[f"{selected_modem} - RSSI"],
                     name="RSSI",
                     line=dict(color="red", dash="dot"),
-                    hovertemplate="RSSI: %{y:.1f} dBm<br>Time: %{x} min"
+                    hovertemplate="RSSI: %{y:.1f} dBm"
                 ),
                 secondary_y=True
             )
@@ -85,7 +85,6 @@ if uploaded_file:
             )
             fig.update_yaxes(title_text="Disconnect %", secondary_y=False)
             fig.update_yaxes(title_text="Latency / RSSI", secondary_y=True)
-            fig.update_traces(showlegend=True, hoverlabel=dict(namelength=0))
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.warning("Please select at least one metric.")
@@ -103,7 +102,7 @@ if uploaded_file:
                     x=df[time_col],
                     y=df[f"{modem} - {selected_metric}"],
                     name=modem,
-                    hovertemplate=f"<b>{modem}</b><br>Value: %{{y}}<br>Time: %{{x}} min"
+                    hovertemplate=f"<b>{modem}</b><br>Value: %{{y}}"
                 ))
             fig.update_layout(
                 title=f"{selected_metric} Over Time",
@@ -112,7 +111,6 @@ if uploaded_file:
                 height=500,
                 hovermode="x unified"
             )
-            fig.update_traces(showlegend=True, hoverlabel=dict(namelength=0))
             st.plotly_chart(fig, use_container_width=True)
 
             if selected_metric == "Disconnect %" and st.checkbox("Show Heatmap"):
