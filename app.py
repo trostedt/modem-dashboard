@@ -36,7 +36,7 @@ if uploaded_file:
         fig = make_subplots(specs=[[{"secondary_y": True}]])
         show_plot = False
 
-        # Left Y-axis
+        # Disconnect % → Primary Y
         if "Disconnect %" in selected_metrics:
             fig.add_trace(
                 go.Scatter(
@@ -49,7 +49,7 @@ if uploaded_file:
             )
             show_plot = True
 
-        # Right Y-axis
+        # Latency and RSSI → Secondary Y
         if "Latency" in selected_metrics:
             fig.add_trace(
                 go.Scatter(
@@ -77,21 +77,10 @@ if uploaded_file:
         if show_plot:
             fig.update_layout(
                 title=f"{selected_modem} - Selected Metrics Over Time",
-                xaxis=dict(title="Time (minutes)"),
-                yaxis=dict(
-                    title="Disconnect %",
-                    range=[0, 100],
-                    titlefont=dict(color="green"),
-                    tickfont=dict(color="green")
-                ),
-                yaxis2=dict(
-                    title="Latency (ms) / RSSI (dBm)",
-                    titlefont=dict(color="blue"),
-                    tickfont=dict(color="blue")
-                ),
-                legend=dict(x=0.01, y=0.99),
-                margin=dict(l=40, r=80, t=40, b=40),
-                height=500
+                xaxis_title="Time (minutes)",
+                height=500,
+                margin=dict(l=40, r=40, t=40, b=40),
+                legend=dict(x=0.01, y=0.99)
             )
             st.plotly_chart(fig, use_container_width=True)
         else:
