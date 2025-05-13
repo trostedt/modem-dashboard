@@ -42,7 +42,7 @@ if uploaded_file:
                     y=df[f"{selected_modem} - Disconnect %"],
                     name="Disconnect %",
                     line=dict(color="green"),
-                    hovertemplate="Time: %{x}<br>Disconnect %: %{y}"
+                    
                 ),
                 secondary_y=False
             )
@@ -55,7 +55,7 @@ if uploaded_file:
                     y=df[f"{selected_modem} - Latency"],
                     name="Latency",
                     line=dict(color="blue", dash="dash"),
-                    hovertemplate="Latency: %{y:.1f} ms"
+                    
                 ),
                 secondary_y=True
             )
@@ -68,7 +68,7 @@ if uploaded_file:
                     y=df[f"{selected_modem} - RSSI"],
                     name="RSSI",
                     line=dict(color="red", dash="dot"),
-                    hovertemplate="RSSI: %{y:.1f} dBm"
+                    
                 ),
                 secondary_y=True
             )
