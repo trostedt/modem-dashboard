@@ -16,7 +16,6 @@ if uploaded_file:
     df = pd.read_csv(uploaded_file)
     time_col = df.columns[0]
 
-    # Extract modem IDs
     modem_ids = sorted(set(col.split(" - ")[0] for col in df.columns[1:]))
 
     tab1, tab2 = st.tabs(["📈 Single Modem Analysis", "📊 Multi-Modem Comparison"])
@@ -36,27 +35,27 @@ if uploaded_file:
         fig = make_subplots(specs=[[{"secondary_y": True}]])
         show_plot = False
 
-        # Disconnect % → Primary Y
         if "Disconnect %" in selected_metrics:
             fig.add_trace(
                 go.Scatter(
                     x=df[time_col],
                     y=df[f"{selected_modem} - Disconnect %"],
                     name="Disconnect %",
-                    line=dict(color="green"), hovertemplate="Disconnect %%: %{y}<br>Time: %{x} min"
+                    line=dict(color="green"),
+                    hovertemplate="Disconnect %%: %{y}<br>Time: %{x} min"
                 ),
                 secondary_y=False
             )
             show_plot = True
 
-        # Latency and RSSI → Secondary Y
         if "Latency" in selected_metrics:
             fig.add_trace(
                 go.Scatter(
                     x=df[time_col],
                     y=df[f"{selected_modem} - Latency"],
                     name="Latency (ms)",
-                    line=dict(color="blue", dash="dash"), hovertemplate="Latency (ms): %{y:.1f}<br>Time: %{x} min"
+                    line=dict(color="blue", dash="dash"),
+                    hovertemplate="Latency (ms): %{y:.1f}<br>Time: %{x} min"
                 ),
                 secondary_y=True
             )
@@ -68,7 +67,8 @@ if uploaded_file:
                     x=df[time_col],
                     y=df[f"{selected_modem} - RSSI"],
                     name="RSSI (dBm)",
-                    line=dict(color="red", dash="dot"), hovertemplate="RSSI (dBm): %{y:.1f}<br>Time: %{x} min"
+                    line=dict(color="red", dash="dot"),
+                    hovertemplate="RSSI (dBm): %{y:.1f}<br>Time: %{x} min"
                 ),
                 secondary_y=True
             )
@@ -80,12 +80,12 @@ if uploaded_file:
                 xaxis_title="Time (minutes)",
                 height=500,
                 margin=dict(l=40, r=40, t=40, b=40),
-                legend=dict(x=0.01, y=0.99)
+                legend=dict(x=0.01, y=0.99),
+                hovermode="x unified"
             )
             fig.update_yaxes(title_text="Disconnect %", secondary_y=False)
             fig.update_yaxes(title_text="Latency (ms) / RSSI (dBm)", secondary_y=True)
-            fig.update_layout(hovermode="x unified")
-        st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True)
         else:
             st.warning("Please select at least one metric.")
 
@@ -105,17 +105,18 @@ if uploaded_file:
                 fig.add_trace(go.Scatter(
                     x=df[time_col],
                     y=df[f"{modem} - {selected_metric}"],
-                    name=modem, hovertemplate="%{fullData.name}<br>Value: %{y}<br>Time: %{x} min"
+                    name=modem,
+                    hovertemplate="%{fullData.name}<br>Value: %{y}<br>Time: %{x} min"
                 ))
 
             fig.update_layout(
                 title=f"{selected_metric} Over Time",
                 xaxis_title="Time (minutes)",
                 yaxis_title=selected_metric,
-                height=500
+                height=500,
+                hovermode="x unified"
             )
-            fig.update_layout(hovermode="x unified")
-        st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True)
 
             if selected_metric == "Disconnect %" and st.checkbox("Show Heatmap"):
                 st.subheader("Disconnect % Heatmap")
