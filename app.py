@@ -82,12 +82,9 @@ if uploaded_file:
                 margin=dict(l=40, r=40, t=40, b=40),
                 legend=dict(x=0.01, y=0.99)
             )
-            
-    # Add Y-axis titles safely
-    fig.update_yaxes(title_text="Disconnect %", secondary_y=False)
-    fig.update_yaxes(title_text="Latency (ms) / RSSI (dBm)", secondary_y=True)
-    st.plotly_chart(fig, use_container_width=True)
-    
+            fig.update_yaxes(title_text="Disconnect %", secondary_y=False)
+            fig.update_yaxes(title_text="Latency (ms) / RSSI (dBm)", secondary_y=True)
+            st.plotly_chart(fig, use_container_width=True)
         else:
             st.warning("Please select at least one metric.")
 
@@ -116,12 +113,7 @@ if uploaded_file:
                 yaxis_title=selected_metric,
                 height=500
             )
-            
-    # Add Y-axis titles safely
-    fig.update_yaxes(title_text="Disconnect %", secondary_y=False)
-    fig.update_yaxes(title_text="Latency (ms) / RSSI (dBm)", secondary_y=True)
-    st.plotly_chart(fig, use_container_width=True)
-    
+            st.plotly_chart(fig, use_container_width=True)
 
             if selected_metric == "Disconnect %" and st.checkbox("Show Heatmap"):
                 st.subheader("Disconnect % Heatmap")
